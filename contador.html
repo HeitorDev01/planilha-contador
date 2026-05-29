@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Operacional de Contagem - SA-ATC</title>
+    <style>
+        :root {
+            --primary: #1e293b;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --border: #cbd5e1;
+            --text-main: #334155;
+            --light-bg: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        /* Cabeçalho de Metadados */
+        .meta-header {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            background: var(--light-bg);
+            padding: 15px;
+            border-radius: 8px;
+            flex-wrap: wrap;
+        }
+
+        .meta-field {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .meta-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+
+        .meta-field input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        /* Ações principais */
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: #ef4444; color: white; margin-left: auto; }
+        .btn-danger:hover { background: #dc2626; }
+
+        /* Estilização da Tabela Matriz com Cabeçalho Fixo */
+        .table-container {
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 65vh;
+            margin-top: 10px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* Cabeçalho travado no topo */
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 6px 4px;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .sub-header th {
+            background-color: #334155;
+            font-size: 12px;
+        }
+
+        /* =========================================
+           CORES ALTERNADAS (ZEBRA) UNIFORMES 
+           =========================================
+        */
+        
+        /* Bloco do Dia Ímpar (Fundo Branco) */
+        .day-odd td {
+            background-color: #ffffff; 
+        }
+
+        /* Bloco do Dia Par (Fundo Cinza Mais Escuro) */
+        .day-even td {
+            background-color: #cbd5e1; 
+        }
+
+        /* Estilos de fonte base */
+        .day-cell { font-size: 18px; font-weight: bold; }
+        .shift-cell { font-weight: 600; }
+        /* AQUI FOI ALTERADA A COR PARA PRETO (#000000) DESVINCULANDO DO BOTÃO */
+        .total-shift-cell { font-weight: bold; color: #000000; font-size: 15px; }
+        .total-day-cell { font-weight: bold; color: #000000; font-size: 18px; }
+
+        /* Bloco do Contador dentro da Célula */
+        .counter-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .counter-value {
+            font-weight: bold;
+            font-size: 15px;
+            min-width: 25px;
+        }
+
+        .counter-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .btn-ctrl {
+            width: 22px;
+            height: 22px;
+            padding: 0;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+            border: 1px solid #94a3b8; 
+            background: #ffffff; 
+            color: #334155;
+        }
+        .btn-ctrl:hover { background: #e2e8f0; }
+
+        .delete-day-btn {
+            font-size: 11px;
+            color: #ef4444;
+            background: none;
+            border: none;
+            text-decoration: underline;
+            padding: 0;
+            margin-top: 5px;
+            display: inline-block;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 style="margin-top:0; color: var(--primary);">Painel de Controle de Tráfego e Solicitações</h2>
+        
+        <div class="meta-header">
+            <div class="meta-field">
+                <label>Órgão</label>
+                <input type="text" id="metaOrgao" value="SA-ATC RE" onchange="saveMeta()">
+            </div>
+            <div class="meta-field">
+                <label>Mês / Ano</label>
+                <input type="text" id="metaData" value="MAIO_2026" onchange="saveMeta()">
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn-primary" onclick="addNewDay()">+ Adicionar Próximo Dia</button>
+            <button class="btn-success" onclick="exportToExcel()">Exportar para Excel (.CSV)</button>
+            <button class="btn-danger" onclick="resetAll()">Zerar Tabela</button>
+        </div>
+
+        <div class="table-container" id="scrollArea">
+            <table>
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width: 60px;">DIA</th>
+                        <th rowspan="2" style="width: 80px;">TURNO</th>
+                        <th colspan="8">Mensagens Analisadas</th>
+                        <th colspan="5">Solicitação do ATCO</th>
+                        <th rowspan="2" style="width: 100px;">TOTAL POR TURNO</th>
+                        <th rowspan="2" style="width: 100px;">TOTAL GERAL</th>
+                    </tr>
+                    <tr class="sub-header">
+                        <th>FPL</th><th>ABI</th><th>CPL</th><th>MNP</th><th>CHG</th><th>DLA</th><th>CNL</th><th>RPL</th>
+                        <th>RQP</th><th>MPV</th><th>APV</th><th>TPA</th><th>AFIL</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const msgColumns = ['FPL', 'ABI', 'CPL', 'MNP', 'CHG', 'DLA', 'CNL', 'RPL'];
+        const atcoColumns = ['RQP', 'MPV', 'APV', 'TPA', 'AFIL'];
+        const allFields = [...msgColumns, ...atcoColumns];
+        const shifts = ['Manhã', 'Tarde', 'Noite'];
+
+        let db = JSON.parse(localStorage.getItem('atc_matrix_db')) || {};
+        
+        if (Object.keys(db).length === 0) {
+            initDayData(1);
+        }
+
+        function initDayData(dayNum) {
+            db[dayNum] = {};
+            shifts.forEach(shift => {
+                db[dayNum][shift] = {};
+                allFields.forEach(field => {
+                    db[dayNum][shift][field] = 0;
+                });
+            });
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('atc_matrix_db', JSON.stringify(db));
+        }
+
+        function saveMeta() {
+            localStorage.setItem('atc_meta_orgao', document.getElementById('metaOrgao').value);
+            localStorage.setItem('atc_meta_data', document.getElementById('metaData').value);
+        }
+
+        function loadMeta() {
+            if(localStorage.getItem('atc_meta_orgao')) document.getElementById('metaOrgao').value = localStorage.getItem('atc_meta_orgao');
+            if(localStorage.getItem('atc_meta_data')) document.getElementById('metaData').value = localStorage.getItem('atc_meta_data');
+        }
+
+        function addNewDay() {
+            const currentDays = Object.keys(db).map(Number);
+            const nextDay = currentDays.length > 0 ? Math.max(...currentDays) + 1 : 1;
+            initDayData(nextDay);
+            saveToLocalStorage();
+            renderMatrix();
+            
+            const scrollArea = document.getElementById('scrollArea');
+            setTimeout(() => { scrollArea.scrollTop = scrollArea.scrollHeight; }, 50);
+        }
+
+        function deleteDay(dayNum) {
+            if(confirm(`Remover permanentemente o DIA ${dayNum}?`)) {
+                delete db[dayNum];
+                saveToLocalStorage();
+                renderMatrix();
+            }
+        }
+
+        function resetAll() {
+            if(confirm("⚠️ TEM CERTEZA QUE DESEJA EXCLUIR TUDO?\n\nIsso apagará todos os dias e deixará a tabela vazia para um novo mês.")) {
+                db = {};
+                initDayData(1);
+                saveToLocalStorage();
+                renderMatrix();
+            }
+        }
+
+        function updateValue(day, shift, field, delta) {
+            if (db[day] && db[day][shift]) {
+                let current = db[day][shift][field] || 0;
+                if (current + delta >= 0) {
+                    db[day][shift][field] = current + delta;
+                    saveToLocalStorage();
+                    renderMatrix();
+                }
+            }
+        }
+
+        function renderMatrix() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            const sortedDays = Object.keys(db).map(Number).sort((a, b) => a - b);
+
+            sortedDays.forEach((day, indexList) => {
+                let totalDayCount = 0;
+                
+                const rowColorClass = (indexList % 2 === 0) ? 'day-odd' : 'day-even';
+                
+                shifts.forEach(s => {
+                    allFields.forEach(f => {
+                        totalDayCount += (db[day][s][f] || 0);
+                    });
+                });
+
+                shifts.forEach((shift, index) => {
+                    let tr = document.createElement('tr');
+                    
+                    tr.className = rowColorClass; 
+                    
+                    if (index === 0) {
+                        tr.innerHTML += `
+                            <td rowspan="3" class="day-cell">
+                                ${day}
+                                <br><button class="delete-day-btn" onclick="deleteDay(${day})">Excluir</button>
+                            </td>
+                        `;
+                    }
+
+                    tr.innerHTML += `<td class="shift-cell">${shift}</td>`;
+
+                    let totalShiftCount = 0;
+                    allFields.forEach(field => {
+                        const val = db[day][shift][field] || 0;
+                        totalShiftCount += val;
+
+                        tr.innerHTML += `
+                            <td>
+                                <div class="counter-box">
+                                    <span class="counter-value">${val}</span>
+                                    <div class="counter-controls">
+                                        <button class="btn-ctrl" onclick="updateValue(${day}, '${shift}', '${field}', 1)">+</button>
+                                        <button class="btn-ctrl" onclick="updateValue(${day}, '${shift}', '${field}', -1)">-</button>
+                                    </div>
+                                </div>
+                            </td>
+                        `;
+                    });
+
+                    tr.innerHTML += `<td class="total-shift-cell">${totalShiftCount}</td>`;
+
+                    if (index === 0) {
+                        tr.innerHTML += `<td rowspan="3" class="total-day-cell">${totalDayCount}</td>`;
+                    }
+
+                    tbody.appendChild(tr);
+                });
+            });
+        }
+
+        function exportToExcel() {
+            const orgao = document.getElementById('metaOrgao').value;
+            const dataRef = document.getElementById('metaData').value;
+            
+            let csv = `ORGAO: ${orgao};MES/ANO: ${dataRef}\n`;
+            csv += `DIA;TURNO;${allFields.join(';')};TOTAL POR TURNO;TOTAL GERAL\n`;
+
+            const sortedDays = Object.keys(db).map(Number).sort((a, b) => a - b);
+            sortedDays.forEach(day => {
+                let totalDayCount = 0;
+                shifts.forEach(s => allFields.forEach(f => totalDayCount += (db[day][s][f] || 0)));
+
+                shifts.forEach((shift, index) => {
+                    let row = [day, shift];
+                    let totalShiftCount = 0;
+                    
+                    allFields.forEach(field => {
+                        let val = db[day][shift][field] || 0;
+                        totalShiftCount += val;
+                        row.push(val);
+                    });
+                    
+                    row.push(totalShiftCount);
+                    row.push(index === 0 ? totalDayCount : "");
+                    
+                    csv += row.join(';') + '\n';
+                });
+            });
+
+            const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", `Relatorio_Contagem_${dataRef}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        loadMeta();
+        renderMatrix();
+    </script>
+</body>
+</html>
