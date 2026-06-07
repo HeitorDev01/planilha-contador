@@ -105,7 +105,6 @@
             font-size: 14px;
         }
 
-        /* Cabeçalho travado no topo */
         thead {
             position: sticky;
             top: 0;
@@ -128,29 +127,14 @@
             font-size: 12px;
         }
 
-        /* =========================================
-           CORES ALTERNADAS (ZEBRA) UNIFORMES 
-           =========================================
-        */
-        
-        /* Bloco do Dia Ímpar (Fundo Branco) */
-        .day-odd td {
-            background-color: #ffffff; 
-        }
+        .day-odd td { background-color: #ffffff; }
+        .day-even td { background-color: #cbd5e1; }
 
-        /* Bloco do Dia Par (Fundo Cinza Mais Escuro) */
-        .day-even td {
-            background-color: #cbd5e1; 
-        }
-
-        /* Estilos de fonte base */
         .day-cell { font-size: 18px; font-weight: bold; }
         .shift-cell { font-weight: 600; }
-        /* AQUI FOI ALTERADA A COR PARA PRETO (#000000) DESVINCULANDO DO BOTÃO */
         .total-shift-cell { font-weight: bold; color: #000000; font-size: 15px; }
         .total-day-cell { font-weight: bold; color: #000000; font-size: 18px; }
 
-        /* Bloco do Contador dentro da Célula */
         .counter-box {
             display: flex;
             flex-direction: column;
@@ -195,12 +179,22 @@
             display: inline-block;
             cursor: pointer;
         }
+
+        /* Um pequeno aviso para mostrar se está conectado */
+        #status-conexao {
+            font-size: 12px;
+            color: #10b981;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2 style="margin-top:0; color: var(--primary);">Painel de Controle de Tráfego e Solicitações</h2>
+        <h2 style="margin-top:0; margin-bottom: 5px; color: var(--primary);">Painel de Controle de Tráfego e Solicitações</h2>
+        <span id="status-conexao">🟢 Sincronizado ao Vivo</span>
         
         <div class="meta-header">
             <div class="meta-field">
@@ -241,18 +235,80 @@
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <script>
+        // ==========================================
+        // 1. COLE AQUI AS SUAS CHAVES DO FIREBASE
+        // ==========================================
+       const firebaseConfig = {
+    apiKey: "AIzaSyCCZI4_6O-Om9W58LcaMnVYV1aed_G2i2E",
+    authDomain: "contadorhtml-6a6dc.firebaseapp.com",
+    databaseURL: "https://contadorhtml-6a6dc-default-rtdb.firebaseio.com",
+    projectId: "contadorhtml-6a6dc",
+    storageBucket: "contadorhtml-6a6dc.firebasestorage.app",
+    messagingSenderId: "176518740942",
+    appId: "1:176518740942:web:cf08203360f4e3e1c7099f",
+    measurementId: "G-0CQYG5TZ3M"
+  };
+
+
+        // Inicializa o Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Variáveis da Tabela
         const msgColumns = ['FPL', 'ABI', 'CPL', 'MNP', 'CHG', 'DLA', 'CNL', 'RPL'];
         const atcoColumns = ['RQP', 'MPV', 'APV', 'TPA', 'AFIL'];
         const allFields = [...msgColumns, ...atcoColumns];
         const shifts = ['Manhã', 'Tarde', 'Noite'];
-
-        let db = JSON.parse(localStorage.getItem('atc_matrix_db')) || {};
         
-        if (Object.keys(db).length === 0) {
-            initDayData(1);
+        let db = {}; 
+
+        // ==========================================
+        // 2. SINCRONIZAÇÃO EM TEMPO REAL
+        // ==========================================
+
+        // Fica "ouvindo" a tabela matriz no Firebase
+        database.ref('atc_painel/matriz').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                db = data;
+            } else {
+                db = {};
+                initDayData(1); // Se o banco estiver vazio, cria o dia 1
+                saveToFirebase();
+            }
+            renderMatrix();
+        });
+
+        // Fica "ouvindo" os metadados (Órgão, Mês)
+        database.ref('atc_painel/meta').on('value', (snapshot) => {
+            const meta = snapshot.val();
+            if(meta) {
+                if(meta.orgao) document.getElementById('metaOrgao').value = meta.orgao;
+                if(meta.data) document.getElementById('metaData').value = meta.data;
+            }
+        });
+
+        // ==========================================
+        // 3. FUNÇÕES DE SALVAR NO BANCO
+        // ==========================================
+        function saveToFirebase() {
+            database.ref('atc_painel/matriz').set(db);
         }
 
+        function saveMeta() {
+            database.ref('atc_painel/meta').set({
+                orgao: document.getElementById('metaOrgao').value,
+                data: document.getElementById('metaData').value
+            });
+        }
+
+        // ==========================================
+        // 4. REGRAS DA TABELA
+        // ==========================================
         function initDayData(dayNum) {
             db[dayNum] = {};
             shifts.forEach(shift => {
@@ -263,45 +319,28 @@
             });
         }
 
-        function saveToLocalStorage() {
-            localStorage.setItem('atc_matrix_db', JSON.stringify(db));
-        }
-
-        function saveMeta() {
-            localStorage.setItem('atc_meta_orgao', document.getElementById('metaOrgao').value);
-            localStorage.setItem('atc_meta_data', document.getElementById('metaData').value);
-        }
-
-        function loadMeta() {
-            if(localStorage.getItem('atc_meta_orgao')) document.getElementById('metaOrgao').value = localStorage.getItem('atc_meta_orgao');
-            if(localStorage.getItem('atc_meta_data')) document.getElementById('metaData').value = localStorage.getItem('atc_meta_data');
-        }
-
         function addNewDay() {
             const currentDays = Object.keys(db).map(Number);
             const nextDay = currentDays.length > 0 ? Math.max(...currentDays) + 1 : 1;
             initDayData(nextDay);
-            saveToLocalStorage();
-            renderMatrix();
+            saveToFirebase(); // Salva nas nuvens
             
             const scrollArea = document.getElementById('scrollArea');
             setTimeout(() => { scrollArea.scrollTop = scrollArea.scrollHeight; }, 50);
         }
 
         function deleteDay(dayNum) {
-            if(confirm(`Remover permanentemente o DIA ${dayNum}?`)) {
+            if(confirm(`Remover permanentemente o DIA ${dayNum}? (Isso apagará para todos!)`)) {
                 delete db[dayNum];
-                saveToLocalStorage();
-                renderMatrix();
+                saveToFirebase(); // Salva nas nuvens
             }
         }
 
         function resetAll() {
-            if(confirm("⚠️ TEM CERTEZA QUE DESEJA EXCLUIR TUDO?\n\nIsso apagará todos os dias e deixará a tabela vazia para um novo mês.")) {
+            if(confirm("⚠️ TEM CERTEZA QUE DESEJA EXCLUIR TUDO?\n\nIsso apagará a tabela para toda a equipe!")) {
                 db = {};
                 initDayData(1);
-                saveToLocalStorage();
-                renderMatrix();
+                saveToFirebase(); // Salva nas nuvens
             }
         }
 
@@ -310,8 +349,7 @@
                 let current = db[day][shift][field] || 0;
                 if (current + delta >= 0) {
                     db[day][shift][field] = current + delta;
-                    saveToLocalStorage();
-                    renderMatrix();
+                    saveToFirebase(); // Salva nas nuvens
                 }
             }
         }
@@ -324,7 +362,6 @@
 
             sortedDays.forEach((day, indexList) => {
                 let totalDayCount = 0;
-                
                 const rowColorClass = (indexList % 2 === 0) ? 'day-odd' : 'day-even';
                 
                 shifts.forEach(s => {
@@ -335,7 +372,6 @@
 
                 shifts.forEach((shift, index) => {
                     let tr = document.createElement('tr');
-                    
                     tr.className = rowColorClass; 
                     
                     if (index === 0) {
@@ -378,6 +414,7 @@
             });
         }
 
+        // Exportação continua igual, pegando os dados que já estão na tela
         function exportToExcel() {
             const orgao = document.getElementById('metaOrgao').value;
             const dataRef = document.getElementById('metaData').value;
@@ -393,16 +430,13 @@
                 shifts.forEach((shift, index) => {
                     let row = [day, shift];
                     let totalShiftCount = 0;
-                    
                     allFields.forEach(field => {
                         let val = db[day][shift][field] || 0;
                         totalShiftCount += val;
                         row.push(val);
                     });
-                    
                     row.push(totalShiftCount);
                     row.push(index === 0 ? totalDayCount : "");
-                    
                     csv += row.join(';') + '\n';
                 });
             });
@@ -415,9 +449,6 @@
             link.click();
             document.body.removeChild(link);
         }
-
-        loadMeta();
-        renderMatrix();
     </script>
 </body>
 </html>
