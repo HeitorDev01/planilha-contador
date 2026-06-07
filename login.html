@@ -91,9 +91,9 @@
                     // Se a senha estiver certa, envia para a planilha!
                     window.location.href = 'index.html'; 
                 })
-                .catch((error) => {
-                    errorMsg.innerText = "E-mail ou senha incorretos.";
-                });
+               .catch((error) => {
+            errorMsg.innerText = "Erro real: " + error.message;
+        });
         }
     </script>
 </body>
