@@ -15,179 +15,58 @@
             --light-bg: #f1f5f9;
         }
 
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); color: var(--text-main); margin: 0; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
 
         /* Cabeçalho de Metadados */
-        .meta-header {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-            background: var(--light-bg);
-            padding: 15px;
-            border-radius: 8px;
-            flex-wrap: wrap;
-        }
-
-        .meta-field {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .meta-field label {
-            display: block;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            color: #64748b;
-            margin-bottom: 5px;
-        }
-
-        .meta-field input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-size: 15px;
-            box-sizing: border-box;
+        .meta-header { display: flex; gap: 20px; margin-bottom: 25px; background: var(--light-bg); padding: 15px; border-radius: 8px; flex-wrap: wrap; }
+        .meta-field { flex: 1; min-width: 200px; }
+        .meta-field label { display: block; font-size: 12px; font-weight: bold; text-transform: uppercase; color: #64748b; margin-bottom: 5px; }
+        
+        .meta-field input, .meta-field select { 
+            width: 100%; 
+            padding: 8px; 
+            border: 1px solid var(--border); 
+            border-radius: 4px; 
+            font-size: 15px; 
+            box-sizing: border-box; 
+            background-color: white;
         }
 
         /* Ações principais */
-        .action-bar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
+        .action-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        button { padding: 10px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
         .btn-primary { background: var(--accent); color: white; }
         .btn-primary:hover { background: var(--accent-hover); }
         .btn-success { background: #10b981; color: white; }
         .btn-success:hover { background: #059669; }
-        .btn-danger { background: #ef4444; color: white; margin-left: auto; }
+        .btn-danger { background: #ef4444; color: white; }
         .btn-danger:hover { background: #dc2626; }
+        .btn-logout { background: #64748b; color: white; margin-left: auto; }
+        .btn-logout:hover { background: #475569; }
 
-        /* Estilização da Tabela Matriz com Cabeçalho Fixo */
-        .table-container {
-            overflow-x: auto;
-            overflow-y: auto;
-            max-height: 65vh;
-            margin-top: 10px;
-            border: 1px solid var(--border);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        thead {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        th, td {
-            border: 1px solid var(--border);
-            padding: 6px 4px;
-        }
-
-        th {
-            background-color: var(--primary);
-            color: white;
-            font-weight: 600;
-        }
-
-        .sub-header th {
-            background-color: #334155;
-            font-size: 12px;
-        }
-
+        /* Estilização da Tabela */
+        .table-container { overflow-x: auto; overflow-y: auto; max-height: 65vh; margin-top: 10px; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; text-align: center; font-size: 14px; }
+        thead { position: sticky; top: 0; z-index: 10; }
+        th, td { border: 1px solid var(--border); padding: 6px 4px; }
+        th { background-color: var(--primary); color: white; font-weight: 600; }
+        .sub-header th { background-color: #334155; font-size: 12px; }
+        
         .day-odd td { background-color: #ffffff; }
         .day-even td { background-color: #cbd5e1; }
-
         .day-cell { font-size: 18px; font-weight: bold; }
         .shift-cell { font-weight: 600; }
         .total-shift-cell { font-weight: bold; color: #000000; font-size: 15px; }
         .total-day-cell { font-weight: bold; color: #000000; font-size: 18px; }
 
-        .counter-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .counter-value {
-            font-weight: bold;
-            font-size: 15px;
-            min-width: 25px;
-        }
-
-        .counter-controls {
-            display: flex;
-            gap: 2px;
-        }
-
-        .btn-ctrl {
-            width: 22px;
-            height: 22px;
-            padding: 0;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 3px;
-            border: 1px solid #94a3b8; 
-            background: #ffffff; 
-            color: #334155;
-        }
+        .counter-box { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .counter-value { font-weight: bold; font-size: 15px; min-width: 25px; }
+        .counter-controls { display: flex; gap: 2px; }
+        .btn-ctrl { width: 22px; height: 22px; padding: 0; font-size: 12px; display: flex; align-items: center; justify-content: center; border-radius: 3px; border: 1px solid #94a3b8; background: #ffffff; color: #334155; }
         .btn-ctrl:hover { background: #e2e8f0; }
-
-        .delete-day-btn {
-            font-size: 11px;
-            color: #ef4444;
-            background: none;
-            border: none;
-            text-decoration: underline;
-            padding: 0;
-            margin-top: 5px;
-            display: inline-block;
-            cursor: pointer;
-        }
-
-        /* Um pequeno aviso para mostrar se está conectado */
-        #status-conexao {
-            font-size: 12px;
-            color: #10b981;
-            font-weight: bold;
-            margin-bottom: 10px;
-            display: block;
-        }
+        .delete-day-btn { font-size: 11px; color: #ef4444; background: none; border: none; text-decoration: underline; padding: 0; margin-top: 5px; display: inline-block; cursor: pointer; }
+        #status-conexao { font-size: 12px; color: #10b981; font-weight: bold; margin-bottom: 10px; display: block; }
     </style>
 </head>
 <body>
@@ -198,8 +77,11 @@
         
         <div class="meta-header">
             <div class="meta-field">
-                <label>Órgão</label>
-                <input type="text" id="metaOrgao" value="SA-ATC RE" onchange="saveMeta()">
+                <label>Órgão Selecionado</label>
+                <select id="selectOrgao" onchange="trocarOrgao()">
+                    <option value="SA-ATC_RE">SA-ATC RE</option>
+                    <option value="SA-ATC_AO">SA-ATC AO</option>
+                </select>
             </div>
             <div class="meta-field">
                 <label>Mês / Ano</label>
@@ -211,7 +93,7 @@
             <button class="btn-primary" onclick="addNewDay()">+ Adicionar Próximo Dia</button>
             <button class="btn-success" onclick="exportToExcel()">Exportar para Excel (.CSV)</button>
             <button class="btn-danger" onclick="resetAll()">Zerar Tabela</button>
-            <button class="btn-primary" style="background: #64748b; margin-left: auto;" onclick="sairDoSistema()">Sair do Sistema</button>
+            <button class="btn-logout" onclick="sairDoSistema()">Sair do Sistema</button>
         </div>
 
         <div class="table-container" id="scrollArea">
@@ -237,14 +119,14 @@
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
         // ==========================================
         // 1. COLE AQUI AS SUAS CHAVES DO FIREBASE
         // ==========================================
-       const firebaseConfig = {
+        const firebaseConfig = {
     apiKey: "AIzaSyCCZI4_6O-Om9W58LcaMnVYV1aed_G2i2E",
     authDomain: "contadorhtml-6a6dc.firebaseapp.com",
     databaseURL: "https://contadorhtml-6a6dc-default-rtdb.firebaseio.com",
@@ -256,75 +138,94 @@
   };
 
 
-        // Inicializa o Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // PROTEÇÃO DE ROTA (Obriga a estar logado)
+        // ==========================================
+        // 2. SEGURANÇA E LOGIN
+        // ==========================================
         firebase.auth().onAuthStateChanged((user) => {
             if (!user) {
-                // Se não tem usuário logado, chuta de volta pro login
                 window.location.href = 'login.html';
+            } else {
+                // Só carrega os dados se estiver logado
+                inicializarFirebase();
             }
         });
 
-        // FUNÇÃO DE SAIR DO SISTEMA
         function sairDoSistema() {
             firebase.auth().signOut().then(() => {
                 window.location.href = 'login.html';
             });
         }
 
-        // Variáveis da Tabela
+        // ==========================================
+        // 3. VARIÁVEIS DA TABELA
+        // ==========================================
         const msgColumns = ['FPL', 'ABI', 'CPL', 'MNP', 'CHG', 'DLA', 'CNL', 'RPL'];
         const atcoColumns = ['RQP', 'MPV', 'APV', 'TPA', 'AFIL'];
         const allFields = [...msgColumns, ...atcoColumns];
         const shifts = ['Manhã', 'Tarde', 'Noite'];
         
         let db = {}; 
+        let dbRefMatriz = null;
+        let dbRefMeta = null;
 
         // ==========================================
-        // 2. SINCRONIZAÇÃO EM TEMPO REAL
+        // 4. SINCRONIZAÇÃO EM TEMPO REAL POR ÓRGÃO
         // ==========================================
+        function inicializarFirebase() {
+            // Desconecta da tabela anterior caso o usuário troque de órgão
+            if(dbRefMatriz) dbRefMatriz.off();
+            if(dbRefMeta) dbRefMeta.off();
 
-        // Fica "ouvindo" a tabela matriz no Firebase
-        database.ref('atc_painel/matriz').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                db = data;
-            } else {
-                db = {};
-                initDayData(1); // Se o banco estiver vazio, cria o dia 1
-                saveToFirebase();
-            }
-            renderMatrix();
-        });
+            // Pega qual órgão está selecionado no dropdown
+            const orgaoAtual = document.getElementById('selectOrgao').value;
+            
+            // Define o novo caminho no banco de dados
+            dbRefMatriz = database.ref('atc_painel/dados/' + orgaoAtual + '/matriz');
+            dbRefMeta = database.ref('atc_painel/dados/' + orgaoAtual + '/meta');
 
-        // Fica "ouvindo" os metadados (Órgão, Mês)
-        database.ref('atc_painel/meta').on('value', (snapshot) => {
-            const meta = snapshot.val();
-            if(meta) {
-                if(meta.orgao) document.getElementById('metaOrgao').value = meta.orgao;
-                if(meta.data) document.getElementById('metaData').value = meta.data;
-            }
-        });
+            dbRefMatriz.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    db = data;
+                } else {
+                    db = {};
+                    initDayData(1); // Cria o dia 1 automaticamente se a tabela for nova
+                    saveToFirebase();
+                }
+                renderMatrix();
+            });
 
-        // ==========================================
-        // 3. FUNÇÕES DE SALVAR NO BANCO
-        // ==========================================
-        function saveToFirebase() {
-            database.ref('atc_painel/matriz').set(db);
-        }
-
-        function saveMeta() {
-            database.ref('atc_painel/meta').set({
-                orgao: document.getElementById('metaOrgao').value,
-                data: document.getElementById('metaData').value
+            dbRefMeta.on('value', (snapshot) => {
+                const meta = snapshot.val();
+                if(meta && meta.data) {
+                    document.getElementById('metaData').value = meta.data;
+                }
             });
         }
 
+        // Função disparada quando o usuário troca o órgão na tela
+        function trocarOrgao() {
+            document.getElementById('tableBody').innerHTML = '<tr><td colspan="16">Carregando dados do órgão...</td></tr>';
+            inicializarFirebase();
+        }
+
+        function saveToFirebase() {
+            if(dbRefMatriz) dbRefMatriz.set(db);
+        }
+
+        function saveMeta() {
+            if(dbRefMeta) {
+                dbRefMeta.set({
+                    data: document.getElementById('metaData').value
+                });
+            }
+        }
+
         // ==========================================
-        // 4. REGRAS DA TABELA
+        // 5. REGRAS DA TABELA
         // ==========================================
         function initDayData(dayNum) {
             db[dayNum] = {};
@@ -340,24 +241,23 @@
             const currentDays = Object.keys(db).map(Number);
             const nextDay = currentDays.length > 0 ? Math.max(...currentDays) + 1 : 1;
             initDayData(nextDay);
-            saveToFirebase(); // Salva nas nuvens
-            
+            saveToFirebase();
             const scrollArea = document.getElementById('scrollArea');
             setTimeout(() => { scrollArea.scrollTop = scrollArea.scrollHeight; }, 50);
         }
 
         function deleteDay(dayNum) {
-            if(confirm(`Remover permanentemente o DIA ${dayNum}? (Isso apagará para todos!)`)) {
+            if(confirm(`Remover permanentemente o DIA ${dayNum}? (Isso apagará para todos da equipe neste órgão!)`)) {
                 delete db[dayNum];
-                saveToFirebase(); // Salva nas nuvens
+                saveToFirebase();
             }
         }
 
         function resetAll() {
-            if(confirm("⚠️ TEM CERTEZA QUE DESEJA EXCLUIR TUDO?\n\nIsso apagará a tabela para toda a equipe!")) {
+            if(confirm("⚠️ TEM CERTEZA QUE DESEJA EXCLUIR TUDO NESTE ÓRGÃO?\n\nIsso apagará a tabela inteira!")) {
                 db = {};
                 initDayData(1);
-                saveToFirebase(); // Salva nas nuvens
+                saveToFirebase();
             }
         }
 
@@ -366,7 +266,7 @@
                 let current = db[day][shift][field] || 0;
                 if (current + delta >= 0) {
                     db[day][shift][field] = current + delta;
-                    saveToFirebase(); // Salva nas nuvens
+                    saveToFirebase();
                 }
             }
         }
@@ -374,7 +274,6 @@
         function renderMatrix() {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
-
             const sortedDays = Object.keys(db).map(Number).sort((a, b) => a - b);
 
             sortedDays.forEach((day, indexList) => {
@@ -431,12 +330,12 @@
             });
         }
 
-        // Exportação continua igual, pegando os dados que já estão na tela
         function exportToExcel() {
-            const orgao = document.getElementById('metaOrgao').value;
+            const orgaoAtual = document.getElementById('selectOrgao');
+            const nomeOrgao = orgaoAtual.options[orgaoAtual.selectedIndex].text;
             const dataRef = document.getElementById('metaData').value;
             
-            let csv = `ORGAO: ${orgao};MES/ANO: ${dataRef}\n`;
+            let csv = `ORGAO: ${nomeOrgao};MES/ANO: ${dataRef}\n`;
             csv += `DIA;TURNO;${allFields.join(';')};TOTAL POR TURNO;TOTAL GERAL\n`;
 
             const sortedDays = Object.keys(db).map(Number).sort((a, b) => a - b);
@@ -461,7 +360,7 @@
             const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", `Relatorio_Contagem_${dataRef}.csv`);
+            link.setAttribute("download", `Relatorio_${nomeOrgao}_${dataRef}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
